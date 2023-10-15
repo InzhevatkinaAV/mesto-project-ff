@@ -7,6 +7,7 @@ function createCard(cardData, deleteCard) {
 
   card.querySelector('.card__title').textContent = cardData.name;
   card.querySelector('.card__image').src = cardData.link;
+  card.querySelector('.card__image').alt = cardData.alt;
 
   card.querySelector('.card__delete-button').onclick = deleteCard;
 
@@ -17,11 +18,11 @@ function deleteCard(e) {
   e.target.parentElement.remove();
 }
 
-function showCard(card) {
+function renderCard(placesList, card) {
   placesList.append(card); 
 }
 
 for (let item of initialCards) {
   const card = createCard(item, deleteCard);
-  showCard(card);
+  renderCard(placesList, card);
 }
