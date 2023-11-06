@@ -27,8 +27,6 @@ const submitEdit = popupTypeEdit.querySelector('.popup__form');
 const nameInput = popupTypeEdit.querySelector('.popup__input_type_name');
 const jobInput = popupTypeEdit.querySelector('.popup__input_type_description');
 
-// Обработчик «отправки» формы, хотя пока
-// она никуда отправляться не будет
 function editProfileFormSubmit(evt) {
     evt.preventDefault();
 
@@ -69,7 +67,7 @@ function addNewCardFormSubmit(evt) {
 
     nameCardInput.value = '';
     linkCardInput.value = '';
-    
+
     closePopup(evt);
 }
 
