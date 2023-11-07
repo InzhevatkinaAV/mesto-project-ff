@@ -17,8 +17,6 @@ function addNewClassToComponent(newClass, component) {
 function showInfoInPopup(popup) {
   if (popup.classList.contains('popup_type_edit'))
     showInfoInEditPopup(popup);
-  // else if (popup.classList.contains('popup_type_edit'))
-  //   showImageInImagePopup(popup);
 }
 
 function showInfoInEditPopup(popupTypeEdit) {
@@ -30,15 +28,6 @@ function showInfoInEditPopup(popupTypeEdit) {
   const currentProfileDescription = document.querySelector('.profile__description');
   popupInputDescription.value = currentProfileDescription.innerHTML || null;
 }
-
-// function showImageInImagePopup(popupTypeImage) {
-//   const img = popupTypeImage.querySelector('img');
-//   img.src = evt.target.closest('img').src;
-//   img.alt = evt.target.closest('img').alt;
-
-//   const caption = popupTypeImage.querySelector('.popup__caption');
-//   caption.textContent = img.alt;
-// }
 
 function closePopupByEsc(evt) {
   if (evt.key === 'Escape') {

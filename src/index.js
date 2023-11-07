@@ -29,6 +29,7 @@ profileAddButton.addEventListener('click', function(evt) {
   openPopup(popupTypeNewCard);
 });
 
+//Коллбэк для открытия попапа по клику на изображении в карточке
 function showImageInPopup(evt) {
   const img = popupTypeImage.querySelector('img');
   img.src = evt.target.closest('img').src;
