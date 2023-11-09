@@ -2,8 +2,7 @@ export function openPopup(popup) {
   addNewClassToComponent('popup_is-animated', popup); 
 
   setTimeout(function() { 
-    addNewClassToComponent('popup_is-opened', popup); 
-    showInfoInPopup(popup); 
+    addNewClassToComponent('popup_is-opened', popup);
     popup.style.opacity = 1; 
   }, 100);
 
@@ -12,21 +11,6 @@ export function openPopup(popup) {
 
 function addNewClassToComponent(newClass, component) {
   component.classList.add(newClass);
-}
-
-function showInfoInPopup(popup) {
-  if (popup.classList.contains('popup_type_edit'))
-    showInfoInEditPopup(popup);
-}
-
-function showInfoInEditPopup(popupTypeEdit) {
-  const popupInputName = popupTypeEdit.querySelector('.popup__input_type_name');
-  const currentProfileTitle = document.querySelector('.profile__title');
-  popupInputName.value = currentProfileTitle.innerHTML || null;
-
-  const popupInputDescription = popupTypeEdit.querySelector('.popup__input_type_description');
-  const currentProfileDescription = document.querySelector('.profile__description');
-  popupInputDescription.value = currentProfileDescription.innerHTML || null;
 }
 
 function closePopupByEsc(evt) {

@@ -12,6 +12,7 @@ const placesList = document.querySelector('.places__list');
 
 showCards();
 
+//Показать карточки-заготовки на странице
 function showCards() {
   for (let item of initialCards) {
     const card = createCard(item, deleteCard, cardTemplate, likeCard, showImageInPopup);
@@ -19,11 +20,24 @@ function showCards() {
   }
 }
 
+//Реакция на клик по кнопке "Редактировать профиль"
 const profileEditButton = document.querySelector('.profile__edit-button');
 profileEditButton.addEventListener('click', function(evt) {
+  //Перед тем как показать попап пользователю,
+  //находим и подставляем в поля ввода попапа данные со страницы пользователя:
+  const currentProfileTitle = document.querySelector('.profile__title');
+  const popupInputName = popupTypeEdit.querySelector('.popup__input_type_name');
+  popupInputName.value = currentProfileTitle.textContent;
+
+  const currentProfileDescription = document.querySelector('.profile__description');
+  const popupInputDescription = popupTypeEdit.querySelector('.popup__input_type_description');
+  popupInputDescription.value = currentProfileDescription.textContent;
+
+  //Открываем попап редактирования профиля
   openPopup(popupTypeEdit);
 });
 
+//Реакция на клик по кнопке "Добавить новую карточку"
 const profileAddButton = document.querySelector('.profile__add-button');
 profileAddButton.addEventListener('click', function(evt) {
   openPopup(popupTypeNewCard);
@@ -61,6 +75,8 @@ function editProfileFormSubmit(evt) {
     closePopup(popupTypeEdit);
 }
 
+//По клику на кнопку "Сохранить изменения" в попапе редактирования профиля,
+//данные из полей ввода подставляются в соответствующие области страницы
 submitEdit.addEventListener('submit', editProfileFormSubmit); 
 
 //Добавление карточки
@@ -87,6 +103,8 @@ function addNewCardFormSubmit(evt) {
     closePopup(popupTypeNewCard);
 }
 
+//По клику на кнопку "Сохранить изменения" в попапе добавления изображения,
+//на страницу добавляется новая карточка с данными, введенными в поля ввода попапа
 submitNewCard.addEventListener('submit', addNewCardFormSubmit); 
 
 document.addEventListener('mousedown', closePopupByOverlay);
