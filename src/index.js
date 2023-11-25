@@ -2,6 +2,7 @@ import './pages/index.css';
 import { initialCards } from './scripts/cards.js';
 import { createCard, addCard, renderCard, deleteCard, likeCard,  } from './scripts/card.js'
 import { openPopup, closePopup, closePopupByOverlay } from './scripts/modal.js';
+import { enableValidation, clearValidation } from './scripts/validation.js';
 
 const popupTypeEdit = document.querySelector('.popup_type_edit');
 const popupTypeNewCard = document.querySelector('.popup_type_new-card');
@@ -22,6 +23,8 @@ function showCards() {
 
 //Реакция на клик по кнопке "Редактировать профиль"
 const profileEditButton = document.querySelector('.profile__edit-button');
+const profileEditForm = popupTypeEdit.querySelector('.popup__form');
+const submitButtonEditProfile = popupTypeEdit.querySelector('.popup__button');
 profileEditButton.addEventListener('click', function(evt) {
   //Перед тем как показать попап пользователю,
   //находим и подставляем в поля ввода попапа данные со страницы пользователя:
@@ -33,13 +36,26 @@ profileEditButton.addEventListener('click', function(evt) {
   const popupInputDescription = popupTypeEdit.querySelector('.popup__input_type_description');
   popupInputDescription.value = currentProfileDescription.textContent;
 
+  //Валидация: очистка инпутов формы
+  clearValidation(profileEditForm, [popupInputName, popupInputDescription], submitButtonEditProfile, 
+    '.popup__button', 'popup__button_disabled', 'popup__input_type_error',  'popup__error_visible');
+
   //Открываем попап редактирования профиля
   openPopup(popupTypeEdit);
 });
 
 //Реакция на клик по кнопке "Добавить новую карточку"
 const profileAddButton = document.querySelector('.profile__add-button');
+const addNewCardForm = popupTypeNewCard.querySelector('.popup__form');
+const submitButtonAddNewCard = popupTypeNewCard.querySelector('.popup__button');
 profileAddButton.addEventListener('click', function(evt) {
+  const popupInputCardName = popupTypeNewCard.querySelector('.popup__input_type_card-name');
+  const popupInputUrl = popupTypeNewCard.querySelector('.popup__input_type_url');
+
+  //Валидация: очистка инпутов формы
+  clearValidation(addNewCardForm, [popupInputCardName, popupInputUrl], submitButtonAddNewCard, 
+    '.popup__button', 'popup__button_disabled', 'popup__input_type_error',  'popup__error_visible');
+
   openPopup(popupTypeNewCard);
 });
 
@@ -108,3 +124,6 @@ function addNewCardFormSubmit(evt) {
 submitNewCard.addEventListener('submit', addNewCardFormSubmit); 
 
 document.addEventListener('mousedown', closePopupByOverlay);
+
+//Включение валидации всех форм
+enableValidation('.popup__form', '.popup__input', '.popup__button', 'popup__button_disabled', 'popup__input_type_error', 'popup__error_visible');
