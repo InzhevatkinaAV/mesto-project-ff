@@ -1,8 +1,11 @@
 import './pages/index.css';  
-import { initialCards } from './scripts/cards.js';
 import { createCard, addCard, renderCard, deleteCard, likeCard,  } from './scripts/card.js'
 import { openPopup, closePopup, closePopupByOverlay } from './scripts/modal.js';
 import { enableValidation, clearValidation } from './scripts/validation.js';
+import { getCardsFromServer, getProfileInfoFromServer, updateProfileInfoOnServer,
+  addCardToServer, updatAvatarOnServer } from './scripts/api.js';
+
+let id = '';
 
 const popupTypeEdit = document.querySelector('.popup_type_edit');
 const popupTypeNewCard = document.querySelector('.popup_type_new-card');
@@ -11,15 +14,36 @@ const popupTypeImage = document.querySelector('.popup_type_image');
 const cardTemplate = document.querySelector('#card-template').content; 
 const placesList = document.querySelector('.places__list');
 
-showCards();
+//После загрузки с сервера отображаем на странице карточки и инфорамцию пользователя
+Promise.all([getCardsFromServer, getProfileInfoFromServer])
+  .then(() => {
+    getCardsFromServer()
+      .then(cardsArray => {
+        cardsArray.forEach(item => {
+          const card = createCard(item, deleteCard, cardTemplate, likeCard, showImageInPopup);
+          renderCard(placesList, card)
+        });
+      })
+    .catch((err) => {
+      console.log(err); //Выводим ошибку в консоль, если загрузка не удалась
+    });
 
-//Показать карточки-заготовки на странице
-function showCards() {
-  for (let item of initialCards) {
-    const card = createCard(item, deleteCard, cardTemplate, likeCard, showImageInPopup);
-    renderCard(placesList, card);
-  }
-}
+    getProfileInfoFromServer()
+      .then((data) => {
+        //Обновление данных пользователя
+        id = data['_id'];
+        const currentProfileTitle = document.querySelector('.profile__title');
+        const currentProfileDescription = document.querySelector('.profile__description');
+
+        currentProfileTitle.textContent = data.name;
+        currentProfileDescription.textContent = data.about;
+        
+        currentProfileAvatar.style.backgroundImage = `url('${data.avatar}')`; //Аватар берется с сервера
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  });
 
 //Реакция на клик по кнопке "Редактировать профиль"
 const profileEditButton = document.querySelector('.profile__edit-button');
@@ -77,18 +101,29 @@ const nameInput = popupTypeEdit.querySelector('.popup__input_type_name');
 const jobInput = popupTypeEdit.querySelector('.popup__input_type_description');
 
 function editProfileFormSubmit(evt) {
-    evt.preventDefault();
+  evt.preventDefault();
 
-    const newName = nameInput.value;
-    const newJob = jobInput.value;
+  const newName = nameInput.value;
+  const newJob = jobInput.value;
 
-    const currentProfileTitle = document.querySelector('.profile__title');
-    const currentProfileDescription = document.querySelector('.profile__description');
+  const currentProfileTitle = document.querySelector('.profile__title');
+  const currentProfileDescription = document.querySelector('.profile__description');
 
-    currentProfileTitle.textContent = newName;
-    currentProfileDescription.textContent = newJob;
-    
+  submitEdit.textContent = 'Сохранение...';
+
+  //Отправка данных о пользователе на сервер
+  updateProfileInfoOnServer(newName, newJob)
+  .then((data) => {
+    currentProfileTitle.textContent = data.name;
+    currentProfileDescription.textContent = data.about;
     closePopup(popupTypeEdit);
+  })
+  .catch((err) => {
+    console.log(err);
+  })
+  .finally(() => {
+    submitEdit.textContent = 'Сохранить';
+  });
 }
 
 //По клику на кнопку "Сохранить изменения" в попапе редактирования профиля,
@@ -112,11 +147,20 @@ function addNewCardFormSubmit(evt) {
       alt: newCardName,
     }
 
-    addCard(newCard, cardTemplate, placesList);
+    submitNewCard.textContent = 'Сохранение...';
 
-    submitNewCard.reset();
-
-    closePopup(popupTypeNewCard);
+    addCardToServer(newCard.name, newCard.link)
+    .then((data) => {
+      addCard(newCard, cardTemplate, placesList);
+      submitNewCard.reset();
+      closePopup(popupTypeNewCard);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      submitNewCard.textContent = 'Сохранить';
+    });
 }
 
 //По клику на кнопку "Сохранить изменения" в попапе добавления изображения,
@@ -127,3 +171,41 @@ document.addEventListener('mousedown', closePopupByOverlay);
 
 //Включение валидации всех форм
 enableValidation('.popup__form', '.popup__input', '.popup__button', 'popup__button_disabled', 'popup__input_type_error', 'popup__error_visible');
+
+//Обновление аватара пользователя
+const avatarEditButton = document.querySelector('.profile__avatar-edit'); 
+const popupTypeAvatarEdit = document.querySelector('.popup_type_avatar-edit');
+const changeAvatarForm = popupTypeAvatarEdit.querySelector('.popup__form');
+avatarEditButton.addEventListener('click', function(evt) {
+  //Валидация: очистка инпута формы
+  clearValidation(changeAvatarForm, [popupInputAvatarUrl], submitEditAvatar, 
+    '.popup__button', 'popup__button_disabled', 'popup__input_type_error',  'popup__error_visible');
+
+  openPopup(popupTypeAvatarEdit);
+})
+
+const popupInputAvatarUrl = popupTypeAvatarEdit.querySelector('.popup__input_type_url');
+const currentProfileAvatar = document.querySelector('.profile__image');
+const submitEditAvatar = popupTypeAvatarEdit.querySelector('.popup__form');
+function changeAvatar(evt) {
+  evt.preventDefault();
+
+  const newAvatar = popupInputAvatarUrl.value;
+
+  submitEditAvatar.textContent = 'Сохранение...';
+  updatAvatarOnServer(newAvatar)
+  .then((data) => {
+    currentProfileAvatar.style.backgroundImage = `url(${newAvatar})`
+    closePopup(popupTypeAvatarEdit);
+  })
+  .catch((err) => {
+    console.log(err);
+  })
+  .finally(() => {
+    submitEditAvatar.textContent = 'Сохранить';
+  });
+}
+
+//По клику на кнопку "Сохранить изменения" в попапе изменения аватара,
+//на странице обновляется аватар, изменения отправляются на сервер
+submitEditAvatar.addEventListener('submit', changeAvatar); 
