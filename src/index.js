@@ -121,7 +121,7 @@ function editProfileFormSubmit(evt) {
   const currentProfileTitle = document.querySelector('.profile__title');
   const currentProfileDescription = document.querySelector('.profile__description');
 
-  submitEdit.textContent = 'Сохранение...';
+  submitButtonEditProfile.textContent = 'Сохранение...';
 
   //Отправка данных о пользователе на сервер
   updateProfileInfoOnServer(newName, newJob)
@@ -132,7 +132,7 @@ function editProfileFormSubmit(evt) {
   })
   .catch(console.error)
   .finally(() => {
-    submitEdit.textContent = 'Сохранить';
+    submitButtonEditProfile.textContent = 'Сохранить';
   });
 }
 
@@ -157,16 +157,15 @@ function addNewCardFormSubmit(evt) {
       alt: newCardName,
     }
 
-    submitNewCard.textContent = 'Сохранение...';
+    submitButtonAddNewCard.textContent = 'Сохранение...';
 
     addCardToServer(newCard.name, newCard.link)
     .then((data) => {
       addCard(newCard, cardTemplate, placesList);
-      console.log("add")
     })
     .catch(console.error)
     .finally(() => {
-      submitNewCard.textContent = 'Сохранить';
+      submitButtonAddNewCard.textContent = 'Сохранить';
       closePopup(popupTypeNewCard);
     });
 }
@@ -180,7 +179,7 @@ document.addEventListener('mousedown', closePopupByOverlay);
 //Включение валидации всех форм
 enableValidation('.popup__form', '.popup__input', '.popup__button', 'popup__button_disabled', 'popup__input_type_error', 'popup__error_visible');
 
-//Обновление аватара пользователя
+// Обновление аватара пользователя
 const avatarEditButton = document.querySelector('.profile__avatar-edit'); 
 const popupTypeAvatarEdit = document.querySelector('.popup_type_avatar-edit');
 const changeAvatarForm = popupTypeAvatarEdit.querySelector('.popup__form');
@@ -195,20 +194,26 @@ avatarEditButton.addEventListener('click', function(evt) {
 const popupInputAvatarUrl = popupTypeAvatarEdit.querySelector('.popup__input_type_url');
 const currentProfileAvatar = document.querySelector('.profile__image');
 const submitEditAvatar = popupTypeAvatarEdit.querySelector('.popup__form');
+const submitEditAvatarButton = popupTypeAvatarEdit.querySelector('.popup__button');
 function changeAvatar(evt) {
   evt.preventDefault();
 
   const newAvatar = popupInputAvatarUrl.value;
 
-  submitEditAvatar.textContent = 'Сохранение...';
+  submitEditAvatarButton.textContent = 'Сохранение...';
   updatAvatarOnServer(newAvatar)
   .then((data) => {
     currentProfileAvatar.style.backgroundImage = `url(${newAvatar})`
+
+    const input = submitEditAvatar.querySelector('.popup__input_type_url');
+    clearValidation(submitEditAvatar, [input], submitEditAvatarButton, 
+      '.popup__button', 'popup__button_disabled', 'popup__input_type_error',  'popup__error_visible');
+      input.value = '';
     closePopup(popupTypeAvatarEdit);
   })
   .catch(console.error)
   .finally(() => {
-    submitEditAvatar.textContent = 'Сохранить';
+    submitEditAvatarButton.textContent = 'Сохранить';
   });
 }
 

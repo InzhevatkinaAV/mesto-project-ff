@@ -78,7 +78,7 @@ export function renderCard(placesList, card) {
 export function likeCard(e) {
   const cardLikesCount = e.target.closest('.card').querySelector('.card__likes-count');
 
-  console.log(e.target.closest('.card'))
+  // console.log(e.target.closest('.card'))
   if (e.target.classList.contains('card__like-button_is-active')) {
     dislikeCardOnServer(e.target.closest('.card').id)
     .then(response => {

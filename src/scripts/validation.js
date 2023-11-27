@@ -12,12 +12,12 @@ export function clearValidation(form, inputArray, submitButton, inactiveButtonCl
   inputArray.forEach(input => {
     const inputError = form.querySelector(`.${input.id}_error`);
 
-    console.log(inputError)
     input.classList.remove(inputErrorClass);
     inputError.classList.remove(errorClass);
   })
   
   submitButton.classList.add(inactiveButtonClass);
+  // console.log(submitButton.classList)
 } 
 
 //Проверка валидности инпута
