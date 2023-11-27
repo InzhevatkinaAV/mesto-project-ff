@@ -1,22 +1,28 @@
-export const enableValidation = (formSelector, inputSelector, submitButtonSelector,minactiveButtonClass, inputErrorClass, errorClass) => {
-  const formList = Array.from(document.querySelectorAll(formSelector));
+export const enableValidation = (validationConfig) => {
+  const formArray = Array.from(document.querySelectorAll(`${validationConfig.formSelector}`));
 
-  formList.forEach((formElement) => {
-    setEventListeners(formElement, inputSelector, submitButtonSelector,minactiveButtonClass, inputErrorClass, errorClass);
+  formArray.forEach((formElement) => {
+    setEventListeners(formElement, 
+      validationConfig.inputSelector,
+      validationConfig.submitButtonSelector, validationConfig.inactiveButtonClass, 
+      validationConfig.inputErrorClass, 
+      validationConfig.errorClass);
   });
 };
 
 //Очистка ошибок валидации формы, кнопка "Сохранить" переходит в неактивное состояние
-export function clearValidation(form, inputArray, submitButton, inactiveButtonClass, inputErrorClass, errorClass) {
+export function clearValidation(form, validationConfig) {
+  const inputArray = Array.from(form.querySelectorAll(validationConfig.inputSelector));
+  const submitButton = form.querySelector(validationConfig.submitButtonSelector);
 
   inputArray.forEach(input => {
     const inputError = form.querySelector(`.${input.id}_error`);
 
-    input.classList.remove(inputErrorClass);
-    inputError.classList.remove(errorClass);
+    input.classList.remove(validationConfig.inputErrorClass);
+    inputError.classList.remove(validationConfig.errorClass);
   })
   
-  submitButton.classList.add(inactiveButtonClass);
+  submitButton.classList.add(validationConfig.inactiveButtonClass);
 } 
 
 //Проверка валидности инпута

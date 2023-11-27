@@ -61,8 +61,9 @@ profileEditButton.addEventListener('click', function(evt) {
   jobInput.value = currentProfileDescription.textContent;
 
   //Валидация: очистка инпутов формы
-  clearValidation(profileEditForm, [nameInput, jobInput], submitButtonEditProfile, 
-    'popup__button', 'popup__button_disabled', 'popup__input_type_error',  'popup__error_visible');
+  // clearValidation(profileEditForm, [nameInput, jobInput], submitButtonEditProfile, 
+  //   'popup__button', 'popup__button_disabled', 'popup__input_type_error',  'popup__error_visible');
+  clearValidation(profileEditForm, validationConfig);
 
   //Открываем попап редактирования профиля
   openPopup(popupTypeEdit);
@@ -79,9 +80,9 @@ profileAddButton.addEventListener('click', function(evt) {
   const popupInputUrl = popupTypeNewCard.querySelector('.popup__input_type_url');
 
   //Валидация: очистка инпутов формы
-  clearValidation(addNewCardForm, [popupInputCardName, popupInputUrl], submitButtonAddNewCard, 
-    '.popup__button', 'popup__button_disabled', 'popup__input_type_error',  'popup__error_visible');
-
+  // clearValidation(addNewCardForm, [popupInputCardName, popupInputUrl], submitButtonAddNewCard, 
+  //   '.popup__button', 'popup__button_disabled', 'popup__input_type_error',  'popup__error_visible');
+  clearValidation(addNewCardForm, validationConfig);
   openPopup(popupTypeNewCard);
 });
 
@@ -169,7 +170,15 @@ submitNewCard.addEventListener('submit', addNewCardFormSubmit);
 document.addEventListener('mousedown', closePopupByOverlay);
 
 //Включение валидации всех форм
-enableValidation('.popup__form', '.popup__input', '.popup__button', 'popup__button_disabled', 'popup__input_type_error', 'popup__error_visible');
+const validationConfig = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible'
+}
+enableValidation(validationConfig);
 
 // Обновление аватара пользователя
 const avatarEditButton = document.querySelector('.profile__avatar-edit'); 
@@ -177,9 +186,7 @@ const popupTypeAvatarEdit = document.querySelector('.popup_type_avatar-edit');
 const changeAvatarForm = popupTypeAvatarEdit.querySelector('.popup__form');
 avatarEditButton.addEventListener('click', function(evt) {
   //Валидация: очистка инпута формы
-  clearValidation(changeAvatarForm, [popupInputAvatarUrl], submitEditAvatar, 
-    '.popup__button', 'popup__button_disabled', 'popup__input_type_error',  'popup__error_visible');
-
+  clearValidation(changeAvatarForm, validationConfig);
   openPopup(popupTypeAvatarEdit);
 })
 
@@ -198,8 +205,7 @@ function changeAvatar(evt) {
     currentProfileAvatar.style.backgroundImage = `url(${newAvatar})`
 
     const input = submitEditAvatar.querySelector('.popup__input_type_url');
-    clearValidation(submitEditAvatar, [input], submitEditAvatarButton, 
-      '.popup__button', 'popup__button_disabled', 'popup__input_type_error',  'popup__error_visible');
+    clearValidation(submitEditAvatar, validationConfig);
     input.value = '';
     closePopup(popupTypeAvatarEdit);
   })
