@@ -17,7 +17,6 @@ export function clearValidation(form, inputArray, submitButton, inactiveButtonCl
   })
   
   submitButton.classList.add(inactiveButtonClass);
-  // console.log(submitButton.classList)
 } 
 
 //Проверка валидности инпута

@@ -76,10 +76,12 @@ export function renderCard(placesList, card) {
 }
 
 export function likeCard(e) {
+  //Ищу ближаюшую карточку (на которой нажали лайк)
   const cardLikesCount = e.target.closest('.card').querySelector('.card__likes-count');
 
-  // console.log(e.target.closest('.card'))
+  //Если она лайкнута
   if (e.target.classList.contains('card__like-button_is-active')) {
+    //то дизлайкаем
     dislikeCardOnServer(e.target.closest('.card').id)
     .then(response => {
       cardLikesCount.textContent = response.likes.length;
@@ -87,6 +89,7 @@ export function likeCard(e) {
     })
     .catch(console.error);
   } else {
+    //иначе - лайкаем
     likeCardOnServer(e.target.closest('.card').id)
     .then(data => {
       cardLikesCount.textContent = data.likes.length;

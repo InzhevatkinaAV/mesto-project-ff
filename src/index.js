@@ -54,8 +54,6 @@ profileEditButton.addEventListener('click', function(evt) {
   const currentProfileTitle = document.querySelector('.profile__title');
   // const popupInputName = popupTypeEdit.querySelector('.popup__input_type_name');
 
-  // console.log(currentProfileTitle)
-  // console.log(popupInputName)
   nameInput.value = currentProfileTitle.textContent; //!
 
   const currentProfileDescription = document.querySelector('.profile__description');
@@ -63,11 +61,6 @@ profileEditButton.addEventListener('click', function(evt) {
   jobInput.value = currentProfileDescription.textContent;
 
   //Валидация: очистка инпутов формы
-  // console.log("-------------------")
-  // console.log(profileEditForm)
-  // console.log(nameInput) //2й раз null
-  // console.log(jobInput) //2й раз null
-  // console.log(submitButtonEditProfile)
   clearValidation(profileEditForm, [nameInput, jobInput], submitButtonEditProfile, 
     'popup__button', 'popup__button_disabled', 'popup__input_type_error',  'popup__error_visible');
 
@@ -85,9 +78,6 @@ profileAddButton.addEventListener('click', function(evt) {
   const popupInputCardName = popupTypeNewCard.querySelector('.popup__input_type_card-name');
   const popupInputUrl = popupTypeNewCard.querySelector('.popup__input_type_url');
 
-  // console.log("!!!")
-  // console.log(popupInputCardName);
-  // console.log(popupInputUrl)
   //Валидация: очистка инпутов формы
   clearValidation(addNewCardForm, [popupInputCardName, popupInputUrl], submitButtonAddNewCard, 
     '.popup__button', 'popup__button_disabled', 'popup__input_type_error',  'popup__error_visible');
@@ -161,11 +151,13 @@ function addNewCardFormSubmit(evt) {
 
     addCardToServer(newCard.name, newCard.link)
     .then((data) => {
-      addCard(newCard, cardTemplate, placesList);
+      addCard(data /*newCardFromServer*/, cardTemplate, placesList);
     })
     .catch(console.error)
     .finally(() => {
       submitButtonAddNewCard.textContent = 'Сохранить';
+      nameCardInput.value = '';
+      linkCardInput.value = '';
       closePopup(popupTypeNewCard);
     });
 }
@@ -208,7 +200,7 @@ function changeAvatar(evt) {
     const input = submitEditAvatar.querySelector('.popup__input_type_url');
     clearValidation(submitEditAvatar, [input], submitEditAvatarButton, 
       '.popup__button', 'popup__button_disabled', 'popup__input_type_error',  'popup__error_visible');
-      input.value = '';
+    input.value = '';
     closePopup(popupTypeAvatarEdit);
   })
   .catch(console.error)
