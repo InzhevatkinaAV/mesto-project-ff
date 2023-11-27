@@ -8,9 +8,11 @@ export const enableValidation = (formSelector, inputSelector, submitButtonSelect
 
 //Очистка ошибок валидации формы, кнопка "Сохранить" переходит в неактивное состояние
 export function clearValidation(form, inputArray, submitButton, inactiveButtonClass, inputErrorClass, errorClass) {
+
   inputArray.forEach(input => {
     const inputError = form.querySelector(`.${input.id}_error`);
 
+    console.log(inputError)
     input.classList.remove(inputErrorClass);
     inputError.classList.remove(errorClass);
   })

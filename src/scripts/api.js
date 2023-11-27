@@ -131,5 +131,5 @@ function handleResponse(response) {
     return response.json();
   else
     // если ошибка, отклоняем промис
-    return Promise.reject(`Ошибка: ${res.status}`);
+    return Promise.reject(`Ошибка: ${response.status}`);
 };

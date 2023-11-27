@@ -24,25 +24,30 @@ export function createCard(cardData, deleteCard, cardTemplate, likeCard, showIma
       card.querySelector('.card__image').src = defaulPicture;
   });
 
-  card.id = cardData['_id'];
+  card.id = cardData._id; 
 
   card.querySelector('.card__image').addEventListener('click', showImageInPopup);
 
   card.querySelector('.card__like-button').onclick = likeCard;
   const cardLikesCount = card.querySelector('.card__likes-count');
-  cardLikesCount.textContent = cardData.likes.length;
+  cardLikesCount.textContent = 0;
 
-  //Сердце под лайкнутой карточкой должно быть закрашено:
-  cardData.likes.forEach(user => {
-    if (user._id === myId) 
-      toggleClassElement(card.querySelector('.card__like-button'), 'card__like-button_is-active')
-  });
+  if (cardData.likes) {
+   cardLikesCount.textContent = cardData.likes.length;
 
-  if (cardData.owner._id != myId) 
-    card.querySelector('.card__delete-button').style.display = 'none';
-  else
-    card.querySelector('.card__delete-button').onclick = deleteCard;
+    //Сердце под лайкнутой карточкой должно быть закрашено:
+    cardData.likes.forEach(user => {
+      if (user._id === myId) 
+        toggleClassElement(card.querySelector('.card__like-button'), 'card__like-button_is-active')
+    });
+  }
 
+  card.querySelector('.card__delete-button').onclick = deleteCard;
+  if (cardData.owner)
+    if (cardData.owner._id != myId) {
+      card.querySelector('.card__delete-button').style.display = 'none';
+    }
+ 
   return card;
 }
 
@@ -56,12 +61,14 @@ function loadImage(src) {
 	});
 }
 
-export function deleteCard(e) {
+export function deleteCard(e) { 
   deleteCardFromServer(e.target.closest('.card').id) 
   .then(() => {
     e.target.closest('.card').remove();
   })
   .catch(console.error);
+
+  e.target.closest('.card').remove();
 }
 
 export function renderCard(placesList, card) {
@@ -71,21 +78,22 @@ export function renderCard(placesList, card) {
 export function likeCard(e) {
   const cardLikesCount = e.target.closest('.card').querySelector('.card__likes-count');
 
+  console.log(e.target.closest('.card'))
   if (e.target.classList.contains('card__like-button_is-active')) {
     dislikeCardOnServer(e.target.closest('.card').id)
     .then(response => {
       cardLikesCount.textContent = response.likes.length;
+      toggleClassElement(e.target, 'card__like-button_is-active')
     })
     .catch(console.error);
   } else {
     likeCardOnServer(e.target.closest('.card').id)
     .then(data => {
       cardLikesCount.textContent = data.likes.length;
+      toggleClassElement(e.target, 'card__like-button_is-active')
     })
     .catch(console.error);
   }
-
-  toggleClassElement(e.target, 'card__like-button_is-active')
 }
 
 function toggleClassElement(element, className) {
