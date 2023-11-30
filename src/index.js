@@ -15,32 +15,24 @@ const cardTemplate = document.querySelector('#card-template').content;
 const placesList = document.querySelector('.places__list');
 
 //После загрузки с сервера отображаем на странице карточки и инфорамцию пользователя
-Promise.all([getCardsFromServer, getProfileInfoFromServer])
-  .then(() => {
-    getCardsFromServer()
-      .then(cardsArray => {
-        cardsArray.forEach(item => {
-          const card = createCard(item, deleteCard, cardTemplate, likeCard, showImageInPopup);
-          renderCard(placesList, card)
-        });
-      })
-      .catch(console.error)
+Promise.all([getCardsFromServer(), getProfileInfoFromServer()])
+  .then(([cardsArray, userData]) => {
+    cardsArray.forEach(item => {
+      const card = createCard(item, deleteCard, cardTemplate, likeCard, showImageInPopup);
+      renderCard(placesList, card)
+    });
 
-    getProfileInfoFromServer()
-      .then((data) => {
-        //Обновление данных пользователя
-        id_ = data['_id'];
-        const currentProfileTitle = document.querySelector('.profile__title');
-        const currentProfileDescription = document.querySelector('.profile__description');
+    //Обновление данных пользователя
+    id_ = userData['_id'];
+    const currentProfileTitle = document.querySelector('.profile__title');
+    const currentProfileDescription = document.querySelector('.profile__description');
 
-        currentProfileTitle.textContent = data.name;
-        currentProfileDescription.textContent = data.about;
-        
-        //Аватар берется с сервера
-        currentProfileAvatar.style.backgroundImage = `url('${data.avatar}')`;
-      })
-      .catch(console.error)
-  });
+    currentProfileTitle.textContent = userData.name;
+    currentProfileDescription.textContent = userData.about;
+    
+    //Аватар берется с сервера
+    currentProfileAvatar.style.backgroundImage = `url('${userData.avatar}')`;
+  }).catch(console.error)
 
 //Реакция на клик по кнопке "Редактировать профиль"
 const profileEditButton = document.querySelector('.profile__edit-button');
