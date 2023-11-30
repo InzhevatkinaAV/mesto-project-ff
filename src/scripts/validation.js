@@ -1,5 +1,5 @@
 export const enableValidation = (validationConfig) => {
-  const formArray = Array.from(document.querySelectorAll(`${validationConfig.formSelector}`));
+  const formArray = Array.from(document.querySelectorAll(validationConfig.formSelector));
 
   formArray.forEach((formElement) => {
     setEventListeners(formElement, 
@@ -15,18 +15,21 @@ export function clearValidation(form, validationConfig) {
   const inputArray = Array.from(form.querySelectorAll(validationConfig.inputSelector));
   const submitButton = form.querySelector(validationConfig.submitButtonSelector);
 
+  
   inputArray.forEach(input => {
-    const inputError = form.querySelector(`.${input.id}_error`);
-
-    input.classList.remove(validationConfig.inputErrorClass);
-    inputError.classList.remove(validationConfig.errorClass);
+    hideInputError(form, input, validationConfig.inputErrorClass, validationConfig.errorClass);
   })
   
-  submitButton.classList.add(validationConfig.inactiveButtonClass);
+  disableSubmitButton(submitButton, validationConfig.inactiveButtonClass);
 } 
 
+const disableSubmitButton = (button, inactiveButtonClass) => {
+  button.disabled = true; 
+  button.classList.add(inactiveButtonClass);
+}
+
 //Проверка валидности инпута
-export function isValid(formElement, inputElement, inputErrorClass, errorClass) {
+function toggleInputErrorState(formElement, inputElement, inputErrorClass, errorClass) {
   if (inputElement.validity.patternMismatch)
     inputElement.setCustomValidity(inputElement.dataset.errorMessage);
   else
@@ -44,7 +47,7 @@ const setEventListeners = (formElement, inputSelector, submitButtonSelector, ina
 
   inputArray.forEach(inputElement => {
     inputElement.addEventListener('input', () => {
-      isValid(formElement, inputElement, inputErrorClass, errorClass);
+      toggleInputErrorState(formElement, inputElement, inputErrorClass, errorClass);
       toggleButtonState(inputArray, submitButton, inactiveButtonClass);
     });
   });
@@ -55,18 +58,10 @@ const setEventListeners = (formElement, inputSelector, submitButtonSelector, ina
 
 //Переключение стилей кнопки "Сохранить"
 function toggleButtonState(inputArray, submitButton, inactiveButtonClass) {
-  let allInputsAreValid = true;
-  
-  for (let i = 0; i < inputArray.length; i++) {
-    if (!inputArray[i].validity.valid) {
-      allInputsAreValid = false;
-      break;
-    }
-  }
+  const allInputsAreValid = inputArray.every(input => input.validity.valid);
 
   if (!allInputsAreValid) {
-    submitButton.disabled = true;
-    submitButton.classList.add(inactiveButtonClass); //inactiveButtonClass = .popup__button_disabled
+    disableSubmitButton(submitButton, inactiveButtonClass);
   } else {
    submitButton.disabled = false;
    submitButton.classList.remove(inactiveButtonClass); 
