@@ -1,5 +1,5 @@
 import './pages/index.css';  
-import { createCard, addCard, renderCard, deleteCard, likeCard,  } from './scripts/card.js'
+import { createCard, addCard, renderCard, deleteCard, likeCard  } from './scripts/card.js'
 import { openPopup, closePopup, closePopupByOverlay } from './scripts/modal.js';
 import { enableValidation, clearValidation } from './scripts/validation.js';
 import { getCardsFromServer, getProfileInfoFromServer, updateProfileInfoOnServer,
@@ -17,11 +17,6 @@ const placesList = document.querySelector('.places__list');
 //После загрузки с сервера отображаем на странице карточки и инфорамцию пользователя
 Promise.all([getCardsFromServer(), getProfileInfoFromServer()])
   .then(([cardsArray, userData]) => {
-    cardsArray.forEach(item => {
-      const card = createCard(item, deleteCard, cardTemplate, likeCard, showImageInPopup);
-      renderCard(placesList, card)
-    });
-
     //Обновление данных пользователя
     id_ = userData['_id'];
     const currentProfileTitle = document.querySelector('.profile__title');
@@ -32,6 +27,13 @@ Promise.all([getCardsFromServer(), getProfileInfoFromServer()])
     
     //Аватар берется с сервера
     currentProfileAvatar.style.backgroundImage = `url('${userData.avatar}')`;
+
+    //Отображаем карточки
+    cardsArray.forEach(item => {
+      const card = createCard(item, deleteCard, cardTemplate, likeCard, showImageInPopup, id_);
+      renderCard(placesList, card);
+    });
+
   }).catch(console.error)
 
 //Реакция на клик по кнопке "Редактировать профиль"
@@ -66,14 +68,10 @@ const profileAddButton = document.querySelector('.profile__add-button');
 const addNewCardForm = popupTypeNewCard.querySelector('.popup__form');
 const submitButtonAddNewCard = popupTypeNewCard.querySelector('.popup__button');
 profileAddButton.addEventListener('click', function(evt) {
-  // addNewCardForm.reset();
-
   const popupInputCardName = popupTypeNewCard.querySelector('.popup__input_type_card-name');
   const popupInputUrl = popupTypeNewCard.querySelector('.popup__input_type_url');
 
   //Валидация: очистка инпутов формы
-  // clearValidation(addNewCardForm, [popupInputCardName, popupInputUrl], submitButtonAddNewCard, 
-  //   '.popup__button', 'popup__button_disabled', 'popup__input_type_error',  'popup__error_visible');
   clearValidation(addNewCardForm, validationConfig);
   openPopup(popupTypeNewCard);
 });
@@ -144,7 +142,7 @@ function addNewCardFormSubmit(evt) {
 
     addCardToServer(newCard.name, newCard.link)
     .then((data) => {
-      addCard(data /*newCardFromServer*/, cardTemplate, placesList);
+      addCard(data /*newCardFromServer*/, cardTemplate, placesList, showImageInPopup, id_);
     })
     .catch(console.error)
     .finally(() => {
